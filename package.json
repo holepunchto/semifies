@@ -1,6 +1,6 @@
 {
   "name": "semifies",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Slimmed down satisfies from semver",
   "main": "index.js",
   "files": [
