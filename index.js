@@ -1,10 +1,9 @@
 module.exports = satisfies
 
 function satisfies (v, t) {
-  if (!Array.isArray(t)) t = compile(t)
   const [version] = parse(v, '')
 
-  for (const checks of t) {
+  for (const checks of compile(t)) {
     if (checkAll(checks, version)) return true
   }
 
@@ -94,7 +93,7 @@ function numOrString (s) {
 }
 
 function ok (c, a, b) {
-  return b === -1
+  return b === -1 // -1 means x
     ? c !== '<'
     : (c === '=' ? a === b : c === '>' ? a > b : c === '>=' ? a >= b : c === '<' ? a < b : c === '<=' ? a <= b : false)
 }
@@ -127,11 +126,10 @@ function test (v, t, c) {
   // no prerelease - final compare
   if (v.length === 3 && t.length === 3) return ok(c, v[2], t[2])
 
-  if (c[0] === '<') {
-    if (t.length === 3) return false
-    if (v.length === 3) return false
-  }
+  // can never be less when comparing to a prerelease
+  if (c[0] === '<' && (t.length === 3 || v.length === 3)) return false
 
+  // can sometimes be higher
   if (c[0] === '>') {
     if (v.length === 3) return true
     if (t.length === 3) return false
