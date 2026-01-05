@@ -99,8 +99,22 @@ function ok (c, a, b) {
 }
 
 function parse (v, c) {
-  v = v.split('+')[0] // strip build
-  const [a, b] = v.split('-')
+  if (v[0] === 'v') {
+    v = v.slice(1)
+  }
+  // strip build
+  const buildIndex = v.indexOf('+')
+  if (buildIndex !== -1) {
+    v = v.slice(0, buildIndex)
+  }
+  // strip prerelease
+  const prereleaseIndex = v.indexOf('-')
+  let a = v
+  let b = ''
+  if (prereleaseIndex !== -1) {
+    a = v.slice(0, prereleaseIndex)
+    b = v.slice(prereleaseIndex + 1)
+  }
   const nums = a.split('.').map(num).slice(0, 3)
   const last = Math.max(nums.length - 1, 0)
 
@@ -108,9 +122,9 @@ function parse (v, c) {
     c = '>='
     nums.push(0, 0, 0)
     nums[last]++
-  } else if (c === '') { // no comparision, just zero fill
+  } else if (c === '') { // no comparison, just zero fill
     nums.push(0, 0, 0)
-  } else { // anything else just wilcard
+  } else { // anything else just wildcard
     nums.push(-1, -1, -1)
   }
 
